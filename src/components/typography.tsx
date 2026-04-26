@@ -19,8 +19,9 @@ export type HeadingProps<As extends HeadingElement> = ComponentPropsWithoutRef<A
     as?: As;
   };
 
-export function Heading<As extends HeadingElement>({ as, className, element, ...props }: HeadingProps<As>) {
-  const Comp = as ?? "h1";
+export function Heading<As extends HeadingElement>({ as, className, ...props }: HeadingProps<As>) {
+  const element = as ?? "h1";
+  const Comp = element;
 
   return <Comp className={cn(headingVariants({ element }), className)} {...(props as ComponentPropsWithoutRef<As>)} />;
 }
