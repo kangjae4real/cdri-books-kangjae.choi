@@ -11,7 +11,7 @@ type BaseLayoutProps = React.ComponentProps<"div"> &
 
 export default function BaseLayout({ className, children, withHeader = true, ...props }: BaseLayoutProps) {
   return (
-    <div className={cn(baseLayoutVariants(), className)} {...props}>
+    <div className={cn(baseLayoutVariants(), withHeader && "pt-header", className)} {...props}>
       {withHeader && <Header />}
       {children}
     </div>

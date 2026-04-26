@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/shadcn";
 
-const pageLayoutVariants = cva("w-full h-page-content overflow-y-auto flex justify-center mt-18 lg:mt-32");
+const pageLayoutVariants = cva("w-full flex justify-center mt-18 lg:mt-32");
 
 type PageLayoutProps = React.ComponentProps<"div"> & VariantProps<typeof pageLayoutVariants> & {};
 

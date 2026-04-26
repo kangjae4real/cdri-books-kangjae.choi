@@ -6,7 +6,6 @@
 
 @theme inline {
   --height-header: 5rem;
-  --height-page-content: calc(100dvh - var(--height-header));
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
