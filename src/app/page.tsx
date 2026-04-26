@@ -1,7 +1,10 @@
+import PageLayout from "@/components/layouts/page-layout";
+import SearchForm from "@/components/search-form";
+
 export default function IndexPage() {
   return (
-    <div>
-      <h1>Index Page</h1>
-    </div>
+    <PageLayout>
+      <SearchForm title="도서 검색" />
+    </PageLayout>
   );
 }
