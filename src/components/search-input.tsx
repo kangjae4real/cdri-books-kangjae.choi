@@ -3,53 +3,81 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/shadcn";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Input from "@/components/input";
 import { useSearchHistory } from "@/hooks/use-search-history";
+import { SearchFormValues } from "@/schemas/search";
 
 const searchInputVariants = cva("w-120 flex flex-col rounded-4xl border-none bg-secondary px-4");
 
-type SearchInputProps = Omit<React.ComponentProps<"div">, "children"> &
+type SearchInputProps = Omit<React.ComponentProps<"div">, "children" | "onSubmit"> &
   VariantProps<typeof searchInputVariants> & {
     prefixIcon?: React.ReactNode;
     placeholder?: string;
+    onSubmit?: (keyword: string) => void;
   };
 
-export default function SearchInput({ className, prefixIcon, placeholder, ...props }: SearchInputProps) {
+export default function SearchInput({ className, prefixIcon, placeholder, onSubmit, ...props }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [focused, setFocused] = useState(false);
-  const [keyword, setKeyword] = useState("");
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const { history, add, remove } = useSearchHistory();
+
+  const { control, getValues, setValue, trigger } = useFormContext<SearchFormValues>();
+  const { field } = useController({ control, name: "keyword" });
 
   const prefix = useMemo(() => {
     return prefixIcon ?? <HugeiconsIcon icon={Search01Icon} className="text-muted-foreground" />;
   }, [prefixIcon]);
 
-  const handleSubmit = useCallback(() => {
-    if (!keyword.trim()) return;
-    add(keyword);
-  }, [keyword, add]);
+  const submit = useCallback(
+    async (value: string) => {
+      setValue("keyword", value);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleSubmit();
+      const valid = await trigger("keyword");
+
+      if (!valid) {
+        return;
+      }
+
+      const trimmed = value.trim();
+      add(trimmed);
+
+      if (onSubmit) {
+        onSubmit(trimmed);
       }
     },
-    [handleSubmit],
+    [setValue, trigger, add, onSubmit],
   );
 
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-    if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        submit(getValues("keyword"));
+      }
+    },
+    [getValues, submit],
+  );
+
+  const handleBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      return;
+    }
+
     setFocused(false);
   }, []);
 
-  const handleHistoryClick = useCallback((value: string) => {
-    setKeyword(value);
-    inputRef.current?.focus();
-  }, []);
+  const handleHistoryClick = useCallback(
+    (value: string) => {
+      submit(value);
+
+      inputRef.current?.focus();
+    },
+    [submit],
+  );
 
   const handleHistoryRemove = useCallback(
     (value: string) => {
@@ -64,7 +92,10 @@ export default function SearchInput({ className, prefixIcon, placeholder, ...pro
   return (
     <div
       className={cn(searchInputVariants(), className)}
-      onFocus={() => setFocused(true)}
+      onFocus={() => {
+        setFocused(true);
+        setHasOpenedOnce(true);
+      }}
       onBlur={handleBlur}
       {...props}
     >
@@ -72,8 +103,9 @@ export default function SearchInput({ className, prefixIcon, placeholder, ...pro
         {prefix}
         <Input
           ref={inputRef}
-          value={keyword}
-          onChange={(event) => setKeyword(event.target.value)}
+          value={field.value ?? ""}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
         />
@@ -86,26 +118,29 @@ export default function SearchInput({ className, prefixIcon, placeholder, ...pro
         )}
       >
         <div className="overflow-hidden">
+          {/* localStorage 기반 history는 SSR/CSR 간 값이 달라 hydration mismatch가 발생하므로, */}
+          {/* 사용자가 한 번이라도 focus한 이후에만 마운트하여 첫 렌더에서 항상 비어있도록 보장합니다. */}
           <ul className="flex flex-col pt-1 pb-3 pl-9">
-            {history.map((item) => (
-              <li key={item} className="flex items-center justify-between py-2">
-                <button
-                  type="button"
-                  onClick={() => handleHistoryClick(item)}
-                  className="text-foreground flex-1 text-left text-sm"
-                >
-                  {item}
-                </button>
-                <button
-                  type="button"
-                  aria-label="검색기록 삭제"
-                  onClick={() => handleHistoryRemove(item)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
-                </button>
-              </li>
-            ))}
+            {hasOpenedOnce &&
+              history.map((item) => (
+                <li key={item} className="flex items-center justify-between py-2">
+                  <button
+                    type="button"
+                    onClick={() => handleHistoryClick(item)}
+                    className="text-foreground flex-1 text-left text-sm"
+                  >
+                    {item}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="검색기록 삭제"
+                    onClick={() => handleHistoryRemove(item)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
+                  </button>
+                </li>
+              ))}
           </ul>
         </div>
       </div>
