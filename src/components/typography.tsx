@@ -25,13 +25,13 @@ export function Heading<As extends HeadingElement>({ as, className, element, ...
   return <Comp className={cn(headingVariants({ element }), className)} {...(props as ComponentPropsWithoutRef<As>)} />;
 }
 
-const textVariants = cva("", {
+const textVariants = cva("font-medium", {
   variants: {
     type: {
-      paragraphTitle: "",
-      paragraph: "",
+      paragraphTitle: "text-xl",
+      paragraph: "text-sm",
       caption: "",
-      small: "",
+      small: "text-[10px]",
     },
   },
   defaultVariants: {
