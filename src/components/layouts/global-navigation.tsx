@@ -23,10 +23,11 @@ export default function GlobalNavigation({ className, ...props }: GlobalNavigati
   const pathname = usePathname();
   const menuActiveStyle = useCallback(
     (page: Pages) => {
-      return cn(
-        page === pathname &&
-          "relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary",
-      );
+      if (page !== pathname) {
+        return "";
+      }
+
+      return "relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary";
     },
     [pathname],
   );
