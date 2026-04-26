@@ -8,7 +8,7 @@ type PageLayoutProps = React.ComponentProps<"div"> & VariantProps<typeof pageLay
 export default function PageLayout({ className, children, ...props }: PageLayoutProps) {
   return (
     <div className={cn(pageLayoutVariants(), className)} {...props}>
-      <div id="page-children-container" className="w-full max-w-1/2">
+      <div id="page-children-container" className="flex w-full max-w-1/2 justify-center">
         {children}
       </div>
     </div>

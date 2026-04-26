@@ -4,7 +4,7 @@ import { Heading } from "@/components/typography";
 import SearchInput from "@/components/search-input";
 import DetailSearchButton from "@/components/detail-search-button";
 
-const searchFormVariants = cva("w-full flex flex-col gap-4");
+const searchFormVariants = cva("flex flex-col gap-4");
 
 type SearchFormProps = Omit<React.ComponentProps<"div">, "children"> &
   VariantProps<typeof searchFormVariants> & {
