@@ -7,20 +7,20 @@ import { cn } from "@/utils/shadcn";
 import { Heading } from "@/components/typography";
 import SearchInput from "@/components/search-input";
 import DetailSearchButton from "@/components/detail-search-button";
-import { SearchFormValues, searchFormSchema } from "@/schemas/search";
+import { SearchFormValues, SearchSubmitValue, searchFormSchema } from "@/schemas/search";
 
 const searchFormVariants = cva("flex flex-col gap-4");
 
 type SearchFormProps = Omit<React.ComponentProps<"div">, "children"> &
   VariantProps<typeof searchFormVariants> & {
     title: string;
-    onSearch?: (keyword: string) => void;
+    onSearch?: (value: SearchSubmitValue) => void;
   };
 
 export default function SearchForm({ className, title, onSearch, ...props }: SearchFormProps) {
   const form = useForm<SearchFormValues>({
     resolver: standardSchemaResolver(searchFormSchema),
-    defaultValues: { keyword: "" },
+    defaultValues: { keyword: "", detail: { target: "title", keyword: "" } },
     mode: "onSubmit",
   });
 
@@ -33,7 +33,7 @@ export default function SearchForm({ className, title, onSearch, ...props }: Sea
       <FormProvider {...form}>
         <div className="grid w-fit grid-cols-[auto_auto] items-start gap-4">
           <SearchInput onSubmit={onSearch} />
-          <DetailSearchButton className="mt-2" />
+          <DetailSearchButton className="mt-2" onSubmit={onSearch} />
         </div>
       </FormProvider>
     </div>

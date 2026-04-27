@@ -8,7 +8,7 @@ import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Input from "@/components/input";
 import { useSearchHistory } from "@/hooks/use-search-history";
-import { SearchFormValues } from "@/schemas/search";
+import { SearchFormValues, SearchSubmitValue } from "@/schemas/search";
 
 const searchInputVariants = cva("w-120 flex flex-col rounded-4xl border-none bg-secondary px-4");
 
@@ -16,7 +16,7 @@ type SearchInputProps = Omit<React.ComponentProps<"div">, "children" | "onSubmit
   VariantProps<typeof searchInputVariants> & {
     prefixIcon?: React.ReactNode;
     placeholder?: string;
-    onSubmit?: (keyword: string) => void;
+    onSubmit?: (value: SearchSubmitValue) => void;
   };
 
 export default function SearchInput({ className, prefixIcon, placeholder, onSubmit, ...props }: SearchInputProps) {
@@ -45,8 +45,11 @@ export default function SearchInput({ className, prefixIcon, placeholder, onSubm
       const trimmed = value.trim();
       add(trimmed);
 
+      // 키워드 검색 시, 상세 검색 상태 초기화
+      setValue("detail", { target: "title", keyword: "" });
+
       if (onSubmit) {
-        onSubmit(trimmed);
+        onSubmit({ query: trimmed });
       }
     },
     [setValue, trigger, add, onSubmit],
