@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { booksQueries } from "@/queries/books";
 import PageLayout from "@/components/layouts/page-layout";
 import SearchForm from "@/components/search-form";
@@ -12,19 +12,25 @@ import { SearchSubmitValue } from "@/schemas/search";
 
 export default function IndexPage() {
   const [params, setParams] = useState<SearchSubmitValue>({ query: "" });
-  const { data, isFetching } = useQuery(booksQueries.search(params));
+  const { data, isFetching, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery(
+    booksQueries.search(params),
+  );
 
   const documents = useMemo(() => {
-    if (!data?.documents) {
-      return [];
-    }
-
-    return data.documents;
+    return data?.pages.flatMap((page) => page.documents) ?? [];
   }, [data]);
 
   const isEmpty = useMemo(() => {
     return !!params.query && !isFetching && !documents.length;
   }, [params.query, isFetching, documents]);
+
+  const handleEndReached = useCallback(() => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
+    fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <PageLayout>
@@ -36,7 +42,14 @@ export default function IndexPage() {
             검색 결과가 없습니다.
           </Text>
         ) : (
-          <List items={documents} getKey={(book) => book.isbn} renderItem={(book) => <BookListItem book={book} />} />
+          <List
+            items={documents}
+            getKey={(book) => book.isbn}
+            renderItem={(book) => <BookListItem book={book} />}
+            infinite
+            loading={isFetchingNextPage}
+            onEndReached={handleEndReached}
+          />
         )}
       </div>
     </PageLayout>
