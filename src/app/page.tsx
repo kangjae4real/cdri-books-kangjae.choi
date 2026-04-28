@@ -5,9 +5,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { booksQueries } from "@/queries/books";
 import PageLayout from "@/components/layouts/page-layout";
 import SearchForm from "@/components/search-form";
-import List from "@/components/list";
-import ListEmpty from "@/components/list-empty";
-import BookListItem from "@/components/book-list-item";
+import List, { ListEmpty } from "@/components/list";
+import BooksItem from "@/components/books/books-item";
 import { Text } from "@/components/typography";
 import { SearchSubmitValue } from "@/schemas/search";
 
@@ -28,12 +27,12 @@ export default function IndexPage() {
     return data?.pages.flatMap((page) => page.documents) ?? [];
   }, [data]);
 
-  const handleEndReached = useCallback(() => {
+  const handleEndReached = useCallback(async () => {
     if (!hasNextPage || isFetchingNextPage) {
       return;
     }
 
-    fetchNextPage();
+    await fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
@@ -44,7 +43,7 @@ export default function IndexPage() {
         <List
           items={documents}
           getKey={(book) => book.isbn}
-          renderItem={(book) => <BookListItem book={book} />}
+          renderItem={(book) => <BooksItem book={book} />}
           prefix={
             <div className="flex items-center gap-3">
               <Text type="paragraph">도서 검색 결과</Text>

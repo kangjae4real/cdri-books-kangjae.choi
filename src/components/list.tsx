@@ -5,7 +5,35 @@ import { useEffect, useRef } from "react";
 import { Loading03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/utils/shadcn";
-import ListItem from "@/components/list-item";
+import Image from "next/image";
+import { Text } from "@/components/typography";
+
+type ListEmptyProps = {
+  message: string;
+};
+
+export function ListEmpty({ message }: ListEmptyProps) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-24">
+      <Image src="/assets/icons/icon-book.png" alt="" width={80} height={80} />
+      <Text type="paragraph" className="text-muted-foreground">
+        {message}
+      </Text>
+    </div>
+  );
+}
+
+const listItemVariants = cva("");
+
+export type ListItemProps = React.ComponentProps<"li"> & VariantProps<typeof listItemVariants> & {};
+
+export function ListItem({ className, children, ...props }: ListItemProps) {
+  return (
+    <li className={cn(listItemVariants(), className)} {...props}>
+      {children}
+    </li>
+  );
+}
 
 const listVariants = cva("flex flex-col gap-4");
 
