@@ -15,7 +15,7 @@ type ListEmptyProps = {
 export function ListEmpty({ message }: ListEmptyProps) {
   return (
     <div className="flex flex-col items-center gap-4 py-24">
-      <Image src="/assets/icons/icon-book.png" alt="" width={80} height={80} />
+      <Image src="/assets/icons/icon-book.png" alt="" width={84} height={86} className="h-20 w-auto" priority />
       <Text type="paragraph" className="text-muted-foreground">
         {message}
       </Text>

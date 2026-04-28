@@ -67,9 +67,10 @@ export default function BooksItem({ book }: BooksItemProps) {
         >
           <Image
             src={liked ? "/assets/icons/icon-heart-fill.svg" : "/assets/icons/icon-heart.svg"}
-            width={expanded ? 24 : 16}
-            height={expanded ? 24 : 16}
-            alt=""
+            width={22}
+            height={20}
+            alt="like-button-icon"
+            className={cn("w-auto", expanded ? "h-6" : "h-4")}
           />
         </button>
       </div>
