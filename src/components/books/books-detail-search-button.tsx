@@ -12,10 +12,10 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/u
 import Input from "@/components/input";
 import { SearchFormValues, SearchSubmitValue, SearchTarget } from "@/schemas/search";
 
-const detailSearchButtonVariants = cva("h-8.75");
+const booksDetailSearchButtonVariants = cva("h-8.75");
 
-type DetailSearchButtonProps = Omit<React.ComponentProps<"button">, "children" | "onSubmit"> &
-  VariantProps<typeof detailSearchButtonVariants> & {
+type BooksDetailSearchButtonProps = Omit<React.ComponentProps<"button">, "children" | "onSubmit"> &
+  VariantProps<typeof booksDetailSearchButtonVariants> & {
     onSubmit?: (value: SearchSubmitValue) => void;
   };
 
@@ -31,7 +31,7 @@ const TARGET_OPTIONS_MAP: Record<SearchTarget, string> = {
   publisher: "출판사명",
 };
 
-export default function DetailSearchButton({ className, onSubmit, ...props }: DetailSearchButtonProps) {
+export default function BooksDetailSearchButton({ className, onSubmit, ...props }: BooksDetailSearchButtonProps) {
   const [open, setOpen] = useState(false);
 
   const { control, getValues, setValue, trigger } = useFormContext<SearchFormValues>();
@@ -48,7 +48,7 @@ export default function DetailSearchButton({ className, onSubmit, ...props }: De
     const detail = getValues("detail");
     const trimmed = detail.keyword.trim();
 
-    // 상세 검색이 발동되면 키워드 검색 상태 초기화
+    // 상세 검색이 실행되면 키워드 검색 상태 초기화
     setValue("keyword", "");
 
     setOpen(false);
@@ -59,10 +59,10 @@ export default function DetailSearchButton({ className, onSubmit, ...props }: De
   }, [trigger, getValues, setValue, onSubmit]);
 
   const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
+    async (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        submit();
+        await submit();
       }
     },
     [submit],
@@ -71,10 +71,11 @@ export default function DetailSearchButton({ className, onSubmit, ...props }: De
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn(detailSearchButtonVariants(), className)} {...props}>
+        <Button variant="outline" className={cn(booksDetailSearchButtonVariants(), className)} {...props}>
           상세 검색
         </Button>
       </PopoverTrigger>
+
       <PopoverContent align="end" sideOffset={8} className="w-120 gap-0 rounded-lg p-6 pt-10">
         <PopoverClose
           aria-label="닫기"

@@ -102,7 +102,7 @@ export default function BooksItem({ book }: BooksItemProps) {
 
       {expanded ? (
         <div className="flex w-44 shrink-0 flex-col items-end justify-between">
-          <Button variant="outline" onClick={handleToggleExpand} className="h-9 px-3">
+          <Button variant="outline" onClick={handleToggleExpand} className="bg-secondary h-9 border-none px-3">
             상세보기
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 rotate-180" />
           </Button>
@@ -134,7 +134,7 @@ export default function BooksItem({ book }: BooksItemProps) {
           <Button onClick={handleBuy} className="h-9 px-4">
             구매하기
           </Button>
-          <Button variant="outline" onClick={handleToggleExpand} className="h-9 px-3">
+          <Button variant="outline" onClick={handleToggleExpand} className="bg-secondary h-9 border-none px-3">
             상세보기
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
           </Button>
