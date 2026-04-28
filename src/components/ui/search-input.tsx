@@ -98,7 +98,7 @@ export default function SearchInput({
                   <button
                     type="button"
                     onClick={() => onHistorySelect?.(item)}
-                    className="text-foreground flex-1 cursor-pointer text-left text-sm"
+                    className="text-sub-title flex-1 cursor-pointer text-left text-sm"
                   >
                     {item}
                   </button>
