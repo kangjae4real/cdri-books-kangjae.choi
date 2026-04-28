@@ -83,19 +83,19 @@ src
 └── utils
 ```
 
-### `src/app/page.tsx`
+### src/app/page.tsx
 
 도서 검색 메인 페이지입니다. 검색 파라미터를 상태로 가지고 있고, TanStack Query의 `useInfiniteQuery`로 Kakao Books API 페이지네이션을 처리합니다.
 
 검색 결과는 `pages` 데이터를 `flatMap`해 하나의 목록으로 만들고, 다음 페이지 요청은 공용 `List` 컴포넌트의 `onEndReached` 콜백으로 연결했습니다. 페이지 컴포넌트 안에서는 "어떤 데이터를 보여줄지"에 집중하고, 실제 목록 렌더링과 무한 스크롤 감지는 `List`로 분리했습니다.
 
-### `src/app/likes/page.tsx`
+### src/app/likes/page.tsx
 
 찜한 책 목록 페이지입니다. Zustand persist로 저장한 데이터를 사용하며, React 18에서 도입된 `useSyncExternalStore`를 이용해 persist hydration 완료 여부를 구독합니다.
 
 이 처리를 넣은 이유는 서버 렌더링 시점과 클라이언트 localStorage 복원 이후의 값이 달라질 수 있기 때문입니다. hydration이 끝나기 전에는 로딩 상태를 보여주고, 완료된 뒤 실제 찜 목록을 렌더링해 화면 불일치 가능성을 줄였습니다.
 
-### `src/components/list.tsx`
+### src/components/list.tsx
 
 검색 결과와 찜 목록에서 함께 사용하는 제네릭 목록 컴포넌트입니다.
 
@@ -103,7 +103,7 @@ src
 
 무한 스크롤은 `IntersectionObserver`를 사용했고, viewport 하단에 닿기 조금 전에 다음 페이지를 미리 불러오도록 `rootMargin`을 두었습니다.
 
-### `src/components/books`
+### src/components/books
 
 도서 도메인에 가까운 컴포넌트를 모아둔 폴더입니다.
 
@@ -113,25 +113,25 @@ src
 - `books-item.tsx`: 도서 썸네일, 제목, 저자, 가격, 상세 설명, 구매 링크, 찜하기 액션을 렌더링합니다.
 - `books-list-prefix.tsx`: 목록 상단의 타이틀과 검색 결과 수를 표시합니다.
 
-### `src/hooks/use-search-history.ts`
+### src/hooks/use-search-history.ts
 
 검색어 히스토리를 localStorage에 저장하는 커스텀 훅입니다.
 
 초기 상태를 만들 때 `useState(readHistory)` 형태의 lazy initializer를 사용했습니다. localStorage 접근은 렌더링 때마다 반복할 필요가 없고, 브라우저 API 접근 비용도 있기 때문에 첫 렌더링에만 읽도록 처리했습니다.
 
-### `src/queries/books.ts`
+### src/queries/books.ts
 
 Kakao Books API 검색 쿼리 옵션을 관리합니다.
 
 query key와 query function, 다음 페이지 계산 로직을 한곳에 모아 페이지 컴포넌트가 API 세부 구현을 몰라도 되게 했습니다. 검색어가 없을 때는 `enabled: !!params.query`로 불필요한 요청을 보내지 않습니다.
 
-### `src/stores/liked-books.ts`
+### src/stores/liked-books.ts
 
 찜한 책 상태를 관리합니다.
 
 Zustand와 persist middleware를 사용해 localStorage에 저장합니다. 같은 ISBN을 다시 찜할 경우 중복 저장하지 않고 최신 선택이 목록 상단으로 오도록 처리했습니다.
 
-### `src/env.ts`
+### src/env.ts
 
 `@t3-oss/env-nextjs`와 Zod를 사용해 환경 변수를 검증합니다.
 
