@@ -7,8 +7,8 @@ import PageLayout from "@/components/layouts/page-layout";
 import SearchForm from "@/components/search-form";
 import List, { ListEmpty } from "@/components/list";
 import BooksItem from "@/components/books/books-item";
-import { Text } from "@/components/typography";
 import { SearchSubmitValue } from "@/schemas/search";
+import BooksListPrefix from "@/components/books/books-list-prefix";
 
 export default function IndexPage() {
   const [params, setParams] = useState<SearchSubmitValue>({ query: "" });
@@ -36,26 +36,19 @@ export default function IndexPage() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <PageLayout>
+    <PageLayout title="도서 검색">
       <div className="flex w-full flex-col gap-8">
-        <SearchForm title="도서 검색" onSearch={setParams} />
+        <SearchForm onSearch={setParams} />
 
         <List
           items={documents}
           getKey={(book) => book.isbn}
           renderItem={(book) => <BooksItem book={book} />}
-          prefix={
-            <div className="flex items-center gap-3">
-              <Text type="paragraph">도서 검색 결과</Text>
-              <Text type="paragraph">
-                총 <span className="text-primary">{totalCount}</span>건
-              </Text>
-            </div>
-          }
+          prefix={<BooksListPrefix totalCount={totalCount} />}
           emptyState={isFetching ? null : <ListEmpty message="검색된 결과가 없습니다." />}
-          infinite
           loading={isFetchingNextPage}
           onEndReached={handleEndReached}
+          infinite
         />
       </div>
     </PageLayout>
