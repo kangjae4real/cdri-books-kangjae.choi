@@ -7,14 +7,16 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/utils/shadcn";
 import ListItem from "@/components/list-item";
 
-const listVariants = cva("flex flex-col");
+const listVariants = cva("flex flex-col gap-4");
 
-export type ListProps<T> = Omit<React.ComponentProps<"ul">, "children"> &
+export type ListProps<T> = Omit<React.ComponentProps<"div">, "children" | "prefix"> &
   VariantProps<typeof listVariants> & {
     items: T[];
     getKey: (item: T, index: number) => string | number;
     renderItem: (item: T, index: number) => React.ReactNode;
     itemClassName?: string;
+    prefix?: React.ReactNode;
+    emptyState?: React.ReactNode;
     infinite?: boolean;
     loading?: boolean;
     onEndReached?: () => void;
@@ -26,6 +28,8 @@ export default function List<T>({
   renderItem,
   itemClassName,
   className,
+  prefix,
+  emptyState,
   infinite = false,
   loading = false,
   onEndReached,
@@ -61,24 +65,33 @@ export default function List<T>({
     return () => observer.disconnect();
   }, [infinite, onEndReached]);
 
+  const isEmpty = items.length === 0;
+
   return (
-    <ul className={cn(listVariants(), className)} {...props}>
-      {items.map((item, index) => (
-        <ListItem key={getKey(item, index)} className={itemClassName}>
-          {renderItem(item, index)}
-        </ListItem>
-      ))}
-      {infinite && (
-        <li ref={sentinelRef} aria-hidden={!loading} className={cn("flex justify-center", loading && "py-4")}>
-          {loading && (
-            <HugeiconsIcon
-              icon={Loading03Icon}
-              className="text-muted-foreground size-6 animate-spin"
-              aria-label="다음 페이지 불러오는 중"
-            />
+    <div className={cn(listVariants(), className)} {...props}>
+      {prefix}
+      {isEmpty && emptyState ? (
+        emptyState
+      ) : (
+        <ul className="flex flex-col">
+          {items.map((item, index) => (
+            <ListItem key={getKey(item, index)} className={itemClassName}>
+              {renderItem(item, index)}
+            </ListItem>
+          ))}
+          {infinite && !isEmpty && (
+            <li ref={sentinelRef} aria-hidden={!loading} className={cn("flex justify-center", loading && "py-4")}>
+              {loading && (
+                <HugeiconsIcon
+                  icon={Loading03Icon}
+                  className="text-muted-foreground size-6 animate-spin"
+                  aria-label="다음 페이지 불러오는 중"
+                />
+              )}
+            </li>
           )}
-        </li>
+        </ul>
       )}
-    </ul>
+    </div>
   );
 }
