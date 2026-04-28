@@ -1,5 +1,7 @@
 # CDRI Front-end 사전과제 (cdri-books-kangjae.choi)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/86182a26-2984-487d-b796-12a638e906e4/deploy-status)](https://app.netlify.com/projects/cdri-books-kangjae/deploys)
+
 ## 개요
 
 CDRI Front-end 개발자 채용 과제로 구현한 도서 검색 애플리케이션입니다.
